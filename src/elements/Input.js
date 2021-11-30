@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Input = (props) => {
-    const { width, height, borderBottom, borderTop, borderLeft, borderRight, size, label, placeholder, _onChange, ref} = props;
+    const { width, height, borderBottom, borderTop, borderLeft, borderRight, size, label, placeholder, _onChange, type, } = props;
 
     const styles = {
         width: width,
@@ -18,7 +18,7 @@ const Input = (props) => {
     return (
         <React.Fragment>
             <LabelArea margin="0" size={size}>{label}</LabelArea>
-            <InputArea ref={ref} placeholder={placeholder} onChange={_onChange} {...styles}></InputArea>
+            <InputArea type={type} placeholder={placeholder} onChange={_onChange} {...styles}></InputArea>
         </React.Fragment>
     )
 }
@@ -26,7 +26,7 @@ const Input = (props) => {
 Input.defaultProps = {
     label: '텍스트',
     placeholder: '텍스트를 입력해주세요.',
-    ref: null,
+    type: "text",
     _onChange: () => {},
 }
 

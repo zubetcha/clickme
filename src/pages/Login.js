@@ -2,15 +2,21 @@
 import React from "react"; 
 import { Grid, Text, Button, Input } from "../elements";
 import { getCookie, setCookie, deleteCookie } from "../shared/Cookie";
+import { useDispatch } from "react-redux";
+import { actionCreators as userActions } from "../redux/modules/user";
 
 const Login = (props) => {
+    const dispatch = useDispatch();
 
-    console.log(getCookie('user_id'))
+    const [id, setId] = React.useState("");
+    const [pwd, setPwd] = React.useState("");
 
     const login = () => {
-
-        setCookie("user_id", "zubetcha", 3);
-        setCookie("user_pwd", "pppp", 3);
+        if(id === "" || pwd === "") {
+            window.alert("아이디 혹은 비밀번호가 공란입니다! 입력해주세요!")
+            return;
+        }
+        dispatch(userActions.loginFB(id, pwd));
     }
 
     return (
@@ -20,11 +26,11 @@ const Login = (props) => {
             </Grid>
             <Grid minWidth="400px" maxWidth="600px" margin="0 auto">
                 <Grid padding="16px">
-                    <Input type="text"
+                    <Input
                     label="아이디"
                     placeholder="아이디를 입력해주세요."
-                    _onChange = {() => {
-                        console.log("아이디 입력 완료");
+                    _onChange = {(e) => {
+                        setId(e.target.value);
                     }}
                     ></Input>
                 </Grid>
@@ -32,8 +38,8 @@ const Login = (props) => {
                     <Input type="password"
                     label="패스워드"
                     placeholder="비밀번호를 입력해주세요."
-                    _onChange = {() => {
-                        console.log("비밀번호 입력 완료");
+                    _onChange = {(e) => {
+                        setPwd(e.target.value);
                     }}
                     ></Input>
                 </Grid>
