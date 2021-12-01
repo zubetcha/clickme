@@ -19,7 +19,6 @@ const initialState = {
 
 const uploadImageFB = (image) => {
     return async function (dispatch, getState, {history}) {
-
         dispatch(uploading(true));
 
         const _upload = storage.ref(`images/${image.name}`).put(image);

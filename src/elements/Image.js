@@ -3,11 +3,12 @@ import React from "react";
 import styled from "styled-components";
 
 const Image = (props) => {
-    const { shape, src, size } = props;
+    const { shape, src, size, margin } = props;
 
     const styles = {
         src: src,
         size: size,
+        margin: margin,
     }
 
     if (shape === "circle") {
@@ -35,6 +36,7 @@ Image.defaultProps = {
     shape: "circle",
     src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8_Z6Y_X3KyySHOIPcpwOraBX6meYb7q2brg&usqp=CAU",
     size: 36,
+    margin: false,
 };
 
 const AspectOuter = styled.div`
@@ -46,6 +48,7 @@ const AspectInner = styled.div`
     position: relative;
     padding-top: 75%;
     overflow: hidden;
+    ${(props) => (props.margin ? `margin: ${props.margin};` : "")};
     background-image: url("${(props) => props.src}");
     background-size: cover;
 `;

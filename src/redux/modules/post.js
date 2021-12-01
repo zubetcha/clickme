@@ -3,8 +3,9 @@ import { produce } from "immer";
 import { doc, getDocs, addDoc, collection } from "@firebase/firestore";
 import "moment";
 
-import { firestore } from "../../shared/firebase";
+import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
+import { actionCreators as imageActions } from "./image";
 
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
@@ -43,15 +44,35 @@ const addPostFB = (contents="",) => {
             insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
         }
 
-        const docRef = await addDoc(collection(firestore, "post"), {
-            ...user_info,
-            ..._post
-        });
+        const _image = getState().image.preview;
+        console.log(_image);
 
-        let post = {user_info, ..._post, id: docRef.id};
+        const _upload = storage.ref(`images/${user_info.user_id}_${new Date().getTime()}`).putString(_image, "data_url");
 
-        dispatch(addPost(post));
-        history.replace("/");
+        _upload.then(snapshot => {
+            snapshot.ref.getDownloadURL().then(url => {
+                console.log(url);
+                return url;
+            }).then(url => {
+                const docRef = addDoc(collection(firestore, "post"), {
+                    ...user_info,
+                    ..._post,
+                    image_url: url,
+                });
+                let post = {user_info, ..._post, id: docRef.id, image_url: url,};
+                dispatch(addPost(post));
+                history.replace("/");
+
+                dispatch(imageActions.setPreview(null));
+            })
+            .catch((err) => {
+                window.alert("게시글 작성에 문제가 있습니다.");
+                console.log("게시글 작성에 실패했습니다.", err);
+            });
+        }).catch((err) => {
+            window.alert("이미지 업로드에 문제가 있습니다.");
+            console.log("이미지 업로드에 문제가 있습니다.", err);
+        })   
     }
 }
 

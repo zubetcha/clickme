@@ -4,11 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Grid, Text, Image, Button, Input } from "../elements"
 import Upload from "../shared/Upload";
 import { actionCreators as postActions } from "../redux/modules/post";
+import Spinner from "../spinner-bar.svg";
 
 const PostWrite = (props) => {
     const dispatch = useDispatch();
     const is_login = useSelector((state) => state.user.is_login);
-    const preview = useSelector((state) => state.Image.preview)
+    const preview = useSelector((state) => state.image.preview)
 
 
     const { history } = props;
@@ -44,9 +45,7 @@ const PostWrite = (props) => {
                     <Text margin="0" size="24px" bold>미리보기</Text>
                 </Grid>
             </Grid>
-
-            <Image shape="rectangle" />
-
+            <Image shape="rectangle" margin="auto" src={preview? preview : Spinner }/>
             <Grid padding="16px">
                 <Input _onChange={changeContents} label="게시글 내용" placeholder="게시글 작성" multiLine />
             </Grid>

@@ -27,6 +27,7 @@ const Upload = (props) => {
 
         reader.onloadend = () => {
             console.log(reader.result);
+            dispatch(imageActions.setPreview(reader.result));
         }
     }
 
