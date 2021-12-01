@@ -20,8 +20,7 @@ const Post = (props) => {
             <Text size="10px">{props.insert_dt}</Text>
           </Grid>
           <Grid is_flex width="auto">
-            {props.is_me && <Edit style={{ width: "18px" }} />}
-						<hr />
+            {props.is_me && <Edit style={{ width: "18px", margin: "0 10px 0 0"}} />}
             {props.is_me && <Delete style={{ width: "14px" }} />}
           </Grid>
         </Grid>
@@ -59,6 +58,7 @@ Post.defaultProps = {
   contents: "고양이네요!",
   comment_cnt: 10,
   insert_dt: "2021-11-28 10:00:00",
-};
+	is_me: false,
+}
 
 export default Post;
