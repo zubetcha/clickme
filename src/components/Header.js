@@ -16,15 +16,17 @@ const Header = (props) => {
   const _session_key = `firebase:authUser:${apiKey}:[DEFAULT]`;
   const is_session = sessionStorage.getItem(_session_key) ? true : false;
 
-  console.log(is_session);
-
   if (is_login && is_session) {
     return (
       <Permit>
         <React.Fragment>
           <Grid is_flex padding="4px 0">
             <Grid>
-              <Text margin="0px" size="24px" bold _onClick={() => {}}>
+              <Text margin="0px" size="24px" bold
+                cursor="default"
+                _onClick={() => {
+                  history.push("/");
+                }}>
                 Click me!
               </Text>
             </Grid>
@@ -48,7 +50,12 @@ const Header = (props) => {
     <React.Fragment>
       <Grid is_flex padding="4px 0">
         <Grid>
-          <Text margin="0px" size="24px" bold _onClick={() => {}}>
+          <Text margin="0px" size="24px" bold
+          cursor="default"
+            _onClick={() => {
+              history.push("/");
+            }}
+          >
             Click me!
           </Text>
         </Grid>

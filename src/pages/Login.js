@@ -14,8 +14,6 @@ const Login = (props) => {
 
     const login = () => {
 
-        console.log(id);
-
         if(id === "" || pwd === "") {
             window.alert("아이디 혹은 비밀번호가 공란입니다. 입력해주세요.")
             return;
@@ -25,7 +23,6 @@ const Login = (props) => {
             window.alert("이메일 형식이 맞지 않습니다.")
             return;
         }
-
         dispatch(userActions.loginFB(id, pwd));
     }
 
