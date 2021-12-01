@@ -3,31 +3,41 @@ import React from "react";
 import styled from "styled-components";
 
 const Button = (props) => {
-    const { text, _onClick, is_float } = props;
+    const { text, _onClick, is_float, children, margin, width } = props;
 
     if (is_float) {
         return (
             <React.Fragment>
-                <FloatButton onClick={_onClick}>{text}</FloatButton>
+                <FloatButton onClick={_onClick}>{text? text : children}</FloatButton>
             </React.Fragment>
         )    
     }
-    
+
+    const styles = {
+        margin: margin,
+        width: width,
+    }
+
+
     return (
         <React.Fragment>
-            <Btn onClick={_onClick} is_float={is_float}>{text}</Btn>
+            <Btn onClick={_onClick} is_float={is_float} {...styles}>{text? text : children}</Btn>
         </React.Fragment>
     )
 }
 
 Button.defaultProps = {
-    text: "텍스트",
+    text: false,
+    children: null,
     _onClick: () => {},
     is_float: false,
+    margin: false,
+    width: '100%',
 }
 
 const Btn = styled.button`
-    width: 100%;
+    width: ${(props) => props.width};
+    ${(props) => (props.margin? `margin: ${props.margin};` : '')};
     background-color: #333;
     color: whitesmoke;
     padding: 12px 0;

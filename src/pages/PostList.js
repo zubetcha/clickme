@@ -21,7 +21,7 @@ const PostList = (props) => {
 
 const Container = styled.div`
     max-width: 800px;
-    height: 100vh;
+    height: 100%;
 
     padding-top: 50px;
 

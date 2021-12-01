@@ -6,6 +6,10 @@ import styled from "styled-components";
 import PostList from "../pages/PostList";
 import Login from "../pages/Login";
 import Join from "../pages/Join";
+import PostWrite from "../pages/PostWrite";
+import PostDetail from "../pages/PostDetail";
+
+
 import Header from "../components/Header";
 import { Button, Grid } from "../elements";
 import Permit from "./Permit";
@@ -28,19 +32,21 @@ function App() {
   });
 
   return (
-    <div className="App">
-      <Grid minWidth="400px" maxWidth="800px" margin="0 auto">
+      <Grid bg="#FBF6EF" height="100%">
+          <Grid minWidth="400px" maxWidth="800px" margin="0 auto">
         <Header />
         <ConnectedRouter history={history}>
           <Route path="/" exact component={PostList} />
           <Route path="/login" exact component={Login} />
           <Route path="/join" exact component={Join} />
+          <Route path="/write" exact component={PostWrite} />
+          <Route path="/post/:id" exact component={PostDetail} />
         </ConnectedRouter>
       </Grid>
       <Permit>
           <Button is_float text="+"></Button>
         </Permit>
-    </div>
+      </Grid>
   );
 }
 

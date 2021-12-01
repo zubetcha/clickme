@@ -1,9 +1,11 @@
 // elements
 import React from "react";
 import styled from "styled-components";
+import { Grid, Text } from ".";
 
 const Input = (props) => {
-    const { width, height, borderBottom, borderTop, borderLeft, borderRight, size, label, placeholder, _onChange, type, } = props;
+    const { width, height, borderBottom, borderTop, borderLeft, borderRight, size, label, placeholder, _onChange, type, multiLine, } = props;
+    
 
     const styles = {
         width: width,
@@ -15,20 +17,44 @@ const Input = (props) => {
         size: size,
     }
 
+    if (multiLine) {
+        return (
+            <Grid>
+               {label && <LabelArea margin="0" size={size}>{label}</LabelArea>}
+                <ElTextarea rows={10} placeholder={placeholder} onChange={_onChange} {...styles}></ElTextarea>
+            </Grid>
+        )
+    }
+
     return (
         <React.Fragment>
-            <LabelArea margin="0" size={size}>{label}</LabelArea>
+            {label && <LabelArea margin="0" size={size}>{label}</LabelArea>}
             <InputArea type={type} placeholder={placeholder} onChange={_onChange} {...styles}></InputArea>
         </React.Fragment>
     )
 }
 
 Input.defaultProps = {
-    label: '텍스트',
+    multiLine: false,
+    label: false,
     placeholder: '텍스트를 입력해주세요.',
     type: "text",
     _onChange: () => {},
 }
+
+const ElTextarea = styled.textarea`
+    width: 100%;
+    padding: 10px 4px;
+    border-bottom: 3px solid #333;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    box-sizing: border-box;
+    &:focus {
+        outline: none;
+    }
+
+`;
 
 const LabelArea = styled.label`
     font-size: 12px;
