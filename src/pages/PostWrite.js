@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Grid, Text, Image, Button, Input } from "../elements"
 import Upload from "../shared/Upload";
 import { actionCreators as postActions } from "../redux/modules/post";
-import Spinner from "../spinner-bar.svg";
+import Spinner from "../icons/spinner-bar.svg"
 
 const PostWrite = (props) => {
     const dispatch = useDispatch();
