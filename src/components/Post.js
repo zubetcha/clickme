@@ -42,7 +42,6 @@ Post.defaultProps = {
         user_profile: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8_Z6Y_X3KyySHOIPcpwOraBX6meYb7q2brg&usqp=CAU"
     },
     image_url: "https://cdn.shopify.com/s/files/1/0969/9128/products/FRD4_1_8138c99c-236c-45e4-aa64-74dd876697da.jpg?v=1561202243",
-    title: "제목입니다.",
     contents: "고양이네요!",
     comment_cnt: 10,
     insert_dt: "2021-11-28 10:00:00",

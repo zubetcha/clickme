@@ -1,8 +1,21 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import { Grid, Text, Image, Button, Input } from "../elements"
 import Upload from "../shared/Upload";
 
 const PostWrite = (props) => {
+    const is_login = useSelector((state) => state.user.is_login);
+
+    if (!is_login) {
+        return (
+            <Grid>
+                <Text>잠깐!</Text>
+                <Text>로그인 하신 후 작성하실 수 있습니다.</Text>
+                <Button _onClick={() => {}}>로그인 하러 가기</Button>
+            </Grid>
+        )
+    }
     return (
         <React.Fragment>
             <Grid padding="16px">
