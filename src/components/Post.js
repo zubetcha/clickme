@@ -18,8 +18,11 @@ const Post = (props) => {
           </Grid>
           <Grid is_flex width="auto">
             <Text size="10px">{props.insert_dt}</Text>
-						{props.is_me && <Edit style={{width: "18px"}}></Edit>}
-						{props.is_me && <Delete style={{width: "18px"}} />}
+          </Grid>
+          <Grid is_flex width="auto">
+            {props.is_me && <Edit style={{ width: "18px" }} />}
+						<hr />
+            {props.is_me && <Delete style={{ width: "14px" }} />}
           </Grid>
         </Grid>
         <Grid>
