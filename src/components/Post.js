@@ -2,12 +2,14 @@
 import React from "react";
 
 import { Button, Grid, Image, Text } from "../elements";
+import { history } from "../redux/configureStore"
 
 import { ReactComponent as Comment } from "../icons/comment-dots-regular.svg";
 import { ReactComponent as Edit } from "../icons/edit-regular.svg";
 import { ReactComponent as Delete } from "../icons/trash-alt-regular.svg";
 
 const Post = (props) => {
+
   return (
     <React.Fragment>
       <Grid height="100%" padding="50px 0 0 0">
@@ -20,7 +22,8 @@ const Post = (props) => {
             <Text size="10px">{props.insert_dt}</Text>
           </Grid>
           <Grid is_flex width="auto">
-            {props.is_me && <Edit style={{ width: "18px", margin: "0 10px 0 0"}} />}
+            {props.is_me && <Edit style={{ width: "18px", margin: "0 10px 0 0"}}
+						onClick={() => {history.push(`/write/${props.id}`);}} />}
             {props.is_me && <Delete style={{ width: "14px" }} />}
           </Grid>
         </Grid>
