@@ -15,7 +15,9 @@ const PostList = (props) => {
     console.log(post_list);
 
     React.useEffect(() => {
+        if (post_list.length === 0) {
         dispatch(postActions.getPostFB());
+        }
     }, []);
 
     return (
@@ -24,7 +26,7 @@ const PostList = (props) => {
                 {/* <Post /> */}
                 {post_list.map((p, idx) => {
                     return <Post key={p.id} {...p} />
-                })};
+                })}
             </Container>
         </React.Fragment>
     )
@@ -33,8 +35,6 @@ const PostList = (props) => {
 const Container = styled.div`
     max-width: 800px;
     height: 100%;
-
-    padding-top: 50px;
 
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(360px, 800px));

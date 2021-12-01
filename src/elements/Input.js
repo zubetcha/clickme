@@ -50,6 +50,8 @@ const ElTextarea = styled.textarea`
     border-left: none;
     border-right: none;
     box-sizing: border-box;
+    background-color: #FBF6EF;
+
     &:focus {
         outline: none;
     }
@@ -68,6 +70,7 @@ const InputArea = styled.input`
     border-left: none;
     border-right: none;
     box-sizing: border-box;
+    background-color: #FBF6EF;
     &:focus {
         outline: none;
     }

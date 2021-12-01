@@ -8,8 +8,8 @@ import { ReactComponent as Comment } from '../comment-dots-regular.svg';
 const Post = (props) => {
     return (
         <React.Fragment>
-            <Grid height="100%">
-                <Grid is_flex padding="10px 0">
+            <Grid height="100%" padding="50px 0 0 0">
+                <Grid is_flex padding="10px">
                     <Grid is_flex width="auto">
                         <Image shape="circle" src={props.src} />
                         <Text bold>{props.user_info.user_name}</Text>
@@ -22,14 +22,13 @@ const Post = (props) => {
                 {/* <Grid padding="10px 0">
                     <Text margin="0" bold size="20px" color="tomato">{props.title}</Text>
                 </Grid> */}
-                <Grid>
-                    <Text margin="0" color="grey" size="12px">{props.contents}</Text>
+                <Grid padding="0 10px">
+                    <Text color="grey" size="14px">{props.contents}</Text>
                 </Grid>
-                <Grid is_flex padding="10px 0">
-                    <Comment style={{
+                <Grid padding="0 10px">
+                    <Text vertical="middle" height="inherit"><Comment style={{
                         width: "16px"
-                    }}/>
-                    <Text>{props.comment_cnt}</Text>
+                    }}/> {props.comment_cnt}</Text>
                 </Grid>
             </Grid>
         </React.Fragment>
