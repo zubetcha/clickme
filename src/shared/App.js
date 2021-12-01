@@ -8,6 +8,7 @@ import Login from "../pages/Login";
 import Join from "../pages/Join";
 import PostWrite from "../pages/PostWrite";
 import PostDetail from "../pages/PostDetail";
+import Notification from "../pages/Notification";
 
 
 import Header from "../components/Header";
@@ -32,7 +33,7 @@ function App() {
   });
 
   return (
-      <Grid bg="#FBF6EF" height="100vh">
+      <Grid>
           <Grid minWidth="400px" maxWidth="800px" margin="0 auto">
         <Header />
         <ConnectedRouter history={history}>
@@ -41,6 +42,7 @@ function App() {
           <Route path="/join" exact component={Join} />
           <Route path="/write" exact component={PostWrite} />
           <Route path="/post/:id" exact component={PostDetail} />
+          <Route path="/noti" exact component={Notification} />
         </ConnectedRouter>
       </Grid>
       <Permit>
