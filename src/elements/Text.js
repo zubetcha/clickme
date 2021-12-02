@@ -29,7 +29,7 @@ Text.defaultProps = {
     margin: false,
     height: false,
     vertical: false,
-    cursor: false,
+    cursor: 'default',
     _onClick: () => {},
 }
 

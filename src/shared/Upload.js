@@ -31,15 +31,9 @@ const Upload = (props) => {
         }
     }
 
-    const uploadFB = () => {
-        let image = fileInput.current.files[0];
-        dispatch(imageActions.uploadImageFB(image));
-    }
-
     return (
         <React.Fragment>
             <input type="file" onChange={selectFile} ref={fileInput} disabled={is_uploading}></input>
-            <Button _onClick={uploadFB}>업로드하기</Button>
         </React.Fragment>
     )
 }

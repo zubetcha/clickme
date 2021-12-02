@@ -5,6 +5,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  deleteDoc,
   collection,
 } from "@firebase/firestore";
 import "moment";
@@ -13,9 +14,14 @@ import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
 import { actionCreators as imageActions } from "./image";
 
+// **************** Action Type **************** //
+
 const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
+const DELETE_POST = "DELETE_POST";
+
+// **************** Action Creators **************** //
 
 const setPost = createAction(SET_POST, (post_list) => ({ post_list }));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
@@ -23,6 +29,9 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post_id,
   post,
 }));
+const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
+
+// **************** Initial Data **************** //
 
 const initialState = {
   list: [],
@@ -41,49 +50,30 @@ const initialPost = {
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
 };
 
-const editPostFB = (post_id = null, post = {}) => {
+// **************** Middlewares **************** //
+
+const getPostFB = () => {
   return async function (dispatch, getState, { history }) {
-    if (!post_id) {
-      console.log("게시물 정보가 없습니다.");
-      return;
-    }
+    const postDB = await getDocs(collection(firestore, "post"));
+    let post_list = [];
+    postDB.forEach((doc) => {
+      let _post = doc.data();
 
-    const _image = getState().image.preview;
-    const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
-    const _post = getState().post.list[_post_idx];
-
-    const docRef = doc(firestore, "post", post_id);
-
-    if (_image === _post.image_url) {
-      await updateDoc(docRef, { ...post });
-      dispatch(editPost(post_id, { ...post }));
-      history.replace("/");
-    } else {
-      const user_id = getState().user.user.uid;
-			console.log(user_id)
-      const _upload = storage
-        .ref(`images/${user_id}_${new Date().getTime()}`)
-        .putString(_image, "data_url");
-
-      _upload
-        .then((snapshot) => {
-          snapshot.ref
-            .getDownloadURL()
-            .then((url) => {
-              console.log(url);
-              return url;
-            })
-            .then((url) => {
-              updateDoc(docRef, { ...post, image_url: url });
-              dispatch(editPost(post_id, { ...post, image_url: url }));
-              history.replace("/");
-            });
-        })
-        .catch((err) => {
-          window.alert("이미지 업로드에 문제가 있습니다.");
-          console.log("이미지 업로드에 문제가 있습니다.", err);
-        });
-    }
+      let post = Object.keys(_post).reduce(
+        (acc, cur) => {
+          if (cur.indexOf("user_") !== -1) {
+            return {
+              ...acc,
+              user_info: { ...acc.user_info, [cur]: _post[cur] },
+            };
+          }
+          return { ...acc, [cur]: _post[cur] };
+        },
+        { id: doc.id, user_info: {} }
+      );
+      post_list.push(post);
+    });
+    dispatch(setPost(post_list));
   };
 };
 
@@ -141,30 +131,77 @@ const addPostFB = (contents = "") => {
   };
 };
 
-const getPostFB = () => {
+const editPostFB = (post_id = null, post = {}) => {
   return async function (dispatch, getState, { history }) {
-    const postDB = await getDocs(collection(firestore, "post"));
-    let post_list = [];
-    postDB.forEach((doc) => {
-      let _post = doc.data();
+    if (!post_id) {
+      console.log("게시물 정보가 없습니다.");
+      return;
+    }
 
-      let post = Object.keys(_post).reduce(
-        (acc, cur) => {
-          if (cur.indexOf("user_") !== -1) {
-            return {
-              ...acc,
-              user_info: { ...acc.user_info, [cur]: _post[cur] },
-            };
-          }
-          return { ...acc, [cur]: _post[cur] };
-        },
-        { id: doc.id, user_info: {} }
-      );
-      post_list.push(post);
-    });
-    dispatch(setPost(post_list));
+    const _image = getState().image.preview;
+    const _post_idx = getState().post.list.findIndex((p) => p.id === post_id);
+    const _post = getState().post.list[_post_idx];
+
+    const docRef = doc(firestore, "post", post_id);
+
+    if (_image === _post.image_url) {
+      await updateDoc(docRef, { ...post });
+      dispatch(editPost(post_id, { ...post }));
+      history.replace("/");
+    } else {
+      const user_id = getState().user.user.uid;
+      console.log(user_id);
+      const _upload = storage
+        .ref(`images/${user_id}_${new Date().getTime()}`)
+        .putString(_image, "data_url");
+
+      _upload
+        .then((snapshot) => {
+          snapshot.ref
+            .getDownloadURL()
+            .then((url) => {
+              console.log(url);
+              return url;
+            })
+            .then((url) => {
+              updateDoc(docRef, { ...post, image_url: url });
+              dispatch(editPost(post_id, { ...post, image_url: url }));
+              history.replace("/");
+            });
+        })
+        .catch((err) => {
+          window.alert("이미지 업로드에 문제가 있습니다.");
+          console.log("이미지 업로드에 문제가 있습니다.", err);
+        });
+    }
   };
 };
+
+const deletePostFB = (post_id) => {
+  return async function (dispatch, getState, { history }) {
+    if (!post_id) {
+      console.log("게시물 정보가 없습니다.");
+      return;
+    }
+
+    await deleteDoc(doc(firestore, "post", post_id))
+		dispatch(deletePost(post_id));
+		window.location.reload();
+
+      // .then((post_id) => {
+      //   dispatch(deletePost(post_id));
+      //   window.location.reload()
+			// 	.then((image_url, image) => {
+      //     dispatch(imageActions.deleteImageFB(image_url, image));
+      //   });
+      // })
+      // .catch((err) => {
+      //   console.log("게시글 삭제에 문제가 발생했습니다", err);
+      // });
+  };
+};
+
+// **************** Reducer **************** //
 
 export default handleActions(
   {
@@ -181,6 +218,10 @@ export default handleActions(
         let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
         draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
       }),
+    [DELETE_POST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.filter((p) => p.id !== action.payload.post_id);
+      }),
   },
   initialState
 );
@@ -189,9 +230,11 @@ const actionCreators = {
   setPost,
   addPost,
   editPost,
+  deletePost,
+  getPostFB,
   addPostFB,
   editPostFB,
-  getPostFB,
+  deletePostFB,
 };
 
 export { actionCreators };
