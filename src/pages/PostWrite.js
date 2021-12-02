@@ -30,6 +30,7 @@ const PostWrite = (props) => {
       return;
     }
 
+
     if (is_edit) {
       dispatch(imageActions.setPreview(_post.image_url));
     }
@@ -40,11 +41,21 @@ const PostWrite = (props) => {
   };
 
   const addPost = () => {
-    dispatch(postActions.addPostFB(contents));
+		if (preview === null || contents === "") {
+			window.alert("이미지 업로드와 게시글 작성을 모두 완료해주세요!");
+			return;
+		} else {
+			dispatch(postActions.addPostFB(contents));
+		}
   };
 
 	const editPost = () => {
-		dispatch(postActions.editPostFB(post_id, {contents: contents}));
+		if (preview === null || contents === "") {
+			window.alert("이미지 업로드와 게시글 작성을 모두 완료해주세요!");
+			return;
+		} else {
+			dispatch(postActions.editPostFB(post_id, {contents: contents}));
+		}
 	}
 
   if (!is_login) {

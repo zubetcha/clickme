@@ -10,6 +10,7 @@ import {
   query,
   orderBy,
   limit,
+  startAt,
 } from "@firebase/firestore";
 import "moment";
 
@@ -28,7 +29,10 @@ const LOADING = "LOADING";
 
 // **************** Action Creators **************** //
 
-const setPost = createAction(SET_POST, (post_list) => ({ post_list }));
+const setPost = createAction(SET_POST, (post_list, paging) => ({
+  post_list,
+  paging,
+}));
 const addPost = createAction(ADD_POST, (post) => ({ post }));
 const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post_id,
@@ -63,68 +67,64 @@ const initialPost = {
 
 const getPostFB = (start = null, size = 3) => {
   return async function (dispatch, getState, { history }) {
+    let _paging = getState().post.paging;
+
+    if (_paging.start && !_paging.next) {
+      return;
+    }
 
     dispatch(loading(true));
 
-    const q = query(
-      collection(firestore, "post"),
-      orderBy("insert_dt", "desc")
-    );
+    const postDB = firestore.collection("post");
 
-		if (start) {
-			q.startAt()
-		}
+    let query = postDB.orderBy("insert_dt", "desc");
 
+    if (start) {
+      query = query.startAt(start);
+    }
 
+    query
+      .limit(size + 1)
+      .get()
+      .then((docs) => {
+        let post_list = [];
 
-    const postDB = await getDocs(q);
-    let post_list = [];
-    postDB.forEach((doc) => {
-      let _post = doc.data();
+        let paging = {
+          start: docs.docs[0],
+          next:
+            docs.docs.length === size + 1
+              ? docs.docs[docs.docs.length - 1]
+              : null,
+          size: size,
+        };
 
-      let post = Object.keys(_post).reduce(
-        (acc, cur) => {
-          if (cur.indexOf("user_") !== -1) {
-            return {
-              ...acc,
-              user_info: { ...acc.user_info, [cur]: _post[cur] },
-            };
-          }
-          return { ...acc, [cur]: _post[cur] };
-        },
-        { id: doc.id, user_info: {} }
-      );
-      post_list.push(post);
-    });
-    dispatch(setPost(post_list));
+        docs.forEach((doc) => {
+          let _post = doc.data();
 
-    return;
+          let post = Object.keys(_post).reduce(
+            (acc, cur) => {
+              if (cur.indexOf("user_") !== -1) {
+                return {
+                  ...acc,
+                  user_info: { ...acc.user_info, [cur]: _post[cur] },
+                };
+              }
+              return { ...acc, [cur]: _post[cur] };
+            },
+            { id: doc.id, user_info: {} }
+          );
+          post_list.push(post);
+        });
+        post_list.pop();
 
-    // const postDB = await getDocs(collection(firestore, "post"));
-    // let post_list = [];
-    // postDB.forEach((doc) => {
-    //   let _post = doc.data();
-
-    //   let post = Object.keys(_post).reduce(
-    //     (acc, cur) => {
-    //       if (cur.indexOf("user_") !== -1) {
-    //         return {
-    //           ...acc,
-    //           user_info: { ...acc.user_info, [cur]: _post[cur] },
-    //         };
-    //       }
-    //       return { ...acc, [cur]: _post[cur] };
-    //     },
-    //     { id: doc.id, user_info: {} }
-    //   );
-    //   post_list.push(post);
-    // });
-    // dispatch(setPost(post_list));
+        dispatch(setPost(post_list, paging));
+      });
   };
 };
 
 const addPostFB = (contents = "") => {
   return async function (dispatch, getState, { history }) {
+
     const _user = getState().user.user;
 
     const user_info = {
@@ -132,6 +132,7 @@ const addPostFB = (contents = "") => {
       user_id: _user.uid,
       user_profile: _user.user_profile,
     };
+
     const _post = {
       ...initialPost,
       contents: contents,
@@ -139,7 +140,6 @@ const addPostFB = (contents = "") => {
     };
 
     const _image = getState().image.preview;
-    console.log(_image);
 
     const _upload = storage
       .ref(`images/${user_info.user_id}_${new Date().getTime()}`)
@@ -157,10 +157,10 @@ const addPostFB = (contents = "") => {
               ...user_info,
               ..._post,
               image_url: url,
-            }).then(() => {
+            }).then((docRef) => {
               let post = { user_info, ..._post, id: docRef.id, image_url: url };
               dispatch(addPost(post));
-              // history.replace("/");
+              history.replace("/");
               console.log(post);
 
               dispatch(imageActions.setPreview(null));
@@ -236,8 +236,9 @@ const deletePostFB = (post_id, image) => {
     await deleteDoc(doc(firestore, "post", post_id))
       .then(() => {
         dispatch(deletePost(post_id));
-        _image.delete();
-        window.location.reload();
+        _image.delete().then(() => {
+					window.location.reload();
+				})
       })
       .catch((err) => {
         console.log("게시글 삭제에 문제가 발생했습니다", err);
@@ -256,30 +257,35 @@ const likePostFB = (post_id) => {
 
 // **************** Reducer **************** //
 
-export default handleActions({
-  [SET_POST]: (state, action) =>
-    produce(state, (draft) => {
-      draft.list = action.payload.post_list;
-    }),
-  [ADD_POST]: (state, action) =>
-    produce(state, (draft) => {
-      draft.list.unshift(action.payload.post);
-    }),
-  [EDIT_POST]: (state, action) =>
-    produce(state, (draft) => {
-      let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
-      draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
-    }),
-  [DELETE_POST]: (state, action) =>
-    produce(state, (draft) => {
-      draft.list.filter((p) => p.id !== action.payload.post_id);
-    }),
-  [LIKE_POST]: (state, action) => produce(state, (draft) => {}),
-  [LOADING]: (state, action) => produce(state, (draft) => {
-		draft.is_loading = action.payload.is_loading;
-	}),
-  initialState,
-});
+export default handleActions(
+  {
+    [SET_POST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.push(...action.payload.post_list);
+        draft.paging = action.payload.paging;
+        draft.is_loading = false;
+      }),
+    [ADD_POST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.unshift(action.payload.post);
+      }),
+    [EDIT_POST]: (state, action) =>
+      produce(state, (draft) => {
+        let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
+        draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
+      }),
+    [DELETE_POST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.filter((p) => p.id !== action.payload.post_id);
+      }),
+    [LIKE_POST]: (state, action) => produce(state, (draft) => {}),
+    [LOADING]: (state, action) =>
+      produce(state, (draft) => {
+        draft.is_loading = action.payload.is_loading;
+      }),
+  },
+  initialState
+);
 
 const actionCreators = {
   setPost,
