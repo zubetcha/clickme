@@ -14,6 +14,7 @@ const Upload = (props) => {
     const fileInput = React.useRef();
 
     const selectFile = (e) => {
+				dispatch(imageActions.uploading(true));
         console.log(e);
         console.log(e.target);
         console.log(e.target.files[0])
@@ -28,6 +29,7 @@ const Upload = (props) => {
         reader.onloadend = () => {
             console.log(reader.result);
             dispatch(imageActions.setPreview(reader.result));
+						dispatch(imageActions.uploading(false));
         }
     }
 

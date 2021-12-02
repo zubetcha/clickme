@@ -5,25 +5,28 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, Grid, Image, Text } from "../elements";
 import { history } from "../redux/configureStore";
 import { actionCreators as postActions } from "../redux/modules/post";
-import { actionCreators as imageActions } from "../redux/modules/image";
 
-import { ReactComponent as Comment } from "../icons/comment-dots-regular.svg";
 import { ReactComponent as Edit } from "../icons/edit-regular.svg";
 import { ReactComponent as Delete } from "../icons/trash-alt-regular.svg";
+import { ReactComponent as Heart } from "../icons/heart-solid.svg"
 
 const Post = (props) => {
 
 	const dispatch = useDispatch();
 
 	const deletePost = () => {
-		let splitUrl = props.image_url.split('/');
-		let image = splitUrl[7].split('?')[0].substring(9);
+
+		let image = props.image_url.split('/')[7].split('?')[0].substring(9);
 
 		if (window.confirm('게시글을 삭제하시겠습니까?')) {
-			return dispatch(postActions.deletePostFB(props.id));
+			return dispatch(postActions.deletePostFB(props.id, image));
 		} else {
 			return;
 		}
+	}
+
+	const likePost = () => {
+		
 	}
 
   return (
@@ -56,7 +59,7 @@ const Post = (props) => {
         </Grid>
         <Grid padding="0 10px" is_flex>
           <Text vertical="middle" height="inherit">
-            <Comment
+            <Heart
               style={{
                 width: "16px",
               }}

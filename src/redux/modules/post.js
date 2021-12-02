@@ -20,6 +20,7 @@ const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const DELETE_POST = "DELETE_POST";
+const LIKE_POST = "LIKE_POST";
 
 // **************** Action Creators **************** //
 
@@ -30,6 +31,7 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post,
 }));
 const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
+const likePost = createAction(LIKE_POST, (post_id) => ({post_id}));
 
 // **************** Initial Data **************** //
 
@@ -54,6 +56,12 @@ const initialPost = {
 
 const getPostFB = () => {
   return async function (dispatch, getState, { history }) {
+
+		const postDT = firestore.collection("post");
+
+
+
+
     const postDB = await getDocs(collection(firestore, "post"));
     let post_list = [];
     postDB.forEach((doc) => {
@@ -177,29 +185,36 @@ const editPostFB = (post_id = null, post = {}) => {
   };
 };
 
-const deletePostFB = (post_id) => {
+const deletePostFB = (post_id, image) => {
   return async function (dispatch, getState, { history }) {
     if (!post_id) {
-      console.log("게시물 정보가 없습니다.");
-      return;
+      window.alert("게시물 정보를 받아오고 있습니다. 잠시만 기다려주세요!");
+      return window.location.reload();
     }
 
-    await deleteDoc(doc(firestore, "post", post_id))
-		dispatch(deletePost(post_id));
-		window.location.reload();
+		const _image = storage.ref().child(`images/${image}`)
 
-      // .then((post_id) => {
-      //   dispatch(deletePost(post_id));
-      //   window.location.reload()
-			// 	.then((image_url, image) => {
-      //     dispatch(imageActions.deleteImageFB(image_url, image));
-      //   });
-      // })
-      // .catch((err) => {
-      //   console.log("게시글 삭제에 문제가 발생했습니다", err);
-      // });
+    await deleteDoc(doc(firestore, "post", post_id))
+      .then(() => {
+        dispatch(deletePost(post_id));
+        _image.delete();
+				window.location.reload();
+      })
+      .catch((err) => {
+        console.log("게시글 삭제에 문제가 발생했습니다", err);
+      });
   };
 };
+
+
+const likePostFB = (post_id) => {
+	return async function (dispatch, getState, {history}) {
+		if (!post_id) {
+      window.alert("게시물 정보를 받아오고 있습니다. 잠시만 기다려주세요!");
+      return window.location.reload();
+    }
+	}
+}
 
 // **************** Reducer **************** //
 
@@ -222,6 +237,9 @@ export default handleActions(
       produce(state, (draft) => {
         draft.list.filter((p) => p.id !== action.payload.post_id);
       }),
+			[LIKE_POST]: (state, action) => produce(state, (draft) => {
+
+			})
   },
   initialState
 );
@@ -231,10 +249,12 @@ const actionCreators = {
   addPost,
   editPost,
   deletePost,
+	likePost,
   getPostFB,
   addPostFB,
   editPostFB,
   deletePostFB,
+	likePostFB,
 };
 
 export { actionCreators };
