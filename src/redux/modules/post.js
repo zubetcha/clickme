@@ -298,6 +298,7 @@ const actionCreators = {
   editPostFB,
   deletePostFB,
   likePostFB,
+	loading,
 };
 
 export { actionCreators };
