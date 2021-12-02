@@ -7,6 +7,9 @@ import {
   updateDoc,
   deleteDoc,
   collection,
+  query,
+  orderBy,
+  limit,
 } from "@firebase/firestore";
 import "moment";
 
@@ -21,6 +24,7 @@ const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const DELETE_POST = "DELETE_POST";
 const LIKE_POST = "LIKE_POST";
+const LOADING = "LOADING";
 
 // **************** Action Creators **************** //
 
@@ -31,12 +35,15 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post,
 }));
 const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
-const likePost = createAction(LIKE_POST, (post_id) => ({post_id}));
+const likePost = createAction(LIKE_POST, (post_id) => ({ post_id }));
+const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 
 // **************** Initial Data **************** //
 
 const initialState = {
   list: [],
+  paging: { start: null, next: null, size: 3 },
+  is_loading: false,
 };
 
 const initialPost = {
@@ -54,15 +61,23 @@ const initialPost = {
 
 // **************** Middlewares **************** //
 
-const getPostFB = () => {
+const getPostFB = (start = null, size = 3) => {
   return async function (dispatch, getState, { history }) {
 
-		const postDT = firestore.collection("post");
+    dispatch(loading(true));
+
+    const q = query(
+      collection(firestore, "post"),
+      orderBy("insert_dt", "desc")
+    );
+
+		if (start) {
+			q.startAt()
+		}
 
 
 
-
-    const postDB = await getDocs(collection(firestore, "post"));
+    const postDB = await getDocs(q);
     let post_list = [];
     postDB.forEach((doc) => {
       let _post = doc.data();
@@ -82,6 +97,29 @@ const getPostFB = () => {
       post_list.push(post);
     });
     dispatch(setPost(post_list));
+
+    return;
+
+    // const postDB = await getDocs(collection(firestore, "post"));
+    // let post_list = [];
+    // postDB.forEach((doc) => {
+    //   let _post = doc.data();
+
+    //   let post = Object.keys(_post).reduce(
+    //     (acc, cur) => {
+    //       if (cur.indexOf("user_") !== -1) {
+    //         return {
+    //           ...acc,
+    //           user_info: { ...acc.user_info, [cur]: _post[cur] },
+    //         };
+    //       }
+    //       return { ...acc, [cur]: _post[cur] };
+    //     },
+    //     { id: doc.id, user_info: {} }
+    //   );
+    //   post_list.push(post);
+    // });
+    // dispatch(setPost(post_list));
   };
 };
 
@@ -112,7 +150,6 @@ const addPostFB = (contents = "") => {
         snapshot.ref
           .getDownloadURL()
           .then((url) => {
-            console.log(url);
             return url;
           })
           .then((url) => {
@@ -120,12 +157,14 @@ const addPostFB = (contents = "") => {
               ...user_info,
               ..._post,
               image_url: url,
-            });
-            let post = { user_info, ..._post, id: docRef.id, image_url: url };
-            dispatch(addPost(post));
-            history.replace("/");
+            }).then(() => {
+              let post = { user_info, ..._post, id: docRef.id, image_url: url };
+              dispatch(addPost(post));
+              // history.replace("/");
+              console.log(post);
 
-            dispatch(imageActions.setPreview(null));
+              dispatch(imageActions.setPreview(null));
+            });
           })
           .catch((err) => {
             window.alert("게시글 작성에 문제가 있습니다.");
@@ -192,13 +231,13 @@ const deletePostFB = (post_id, image) => {
       return window.location.reload();
     }
 
-		const _image = storage.ref().child(`images/${image}`)
+    const _image = storage.ref().child(`images/${image}`);
 
     await deleteDoc(doc(firestore, "post", post_id))
       .then(() => {
         dispatch(deletePost(post_id));
         _image.delete();
-				window.location.reload();
+        window.location.reload();
       })
       .catch((err) => {
         console.log("게시글 삭제에 문제가 발생했습니다", err);
@@ -206,55 +245,53 @@ const deletePostFB = (post_id, image) => {
   };
 };
 
-
 const likePostFB = (post_id) => {
-	return async function (dispatch, getState, {history}) {
-		if (!post_id) {
+  return async function (dispatch, getState, { history }) {
+    if (!post_id) {
       window.alert("게시물 정보를 받아오고 있습니다. 잠시만 기다려주세요!");
       return window.location.reload();
     }
-	}
-}
+  };
+};
 
 // **************** Reducer **************** //
 
-export default handleActions(
-  {
-    [SET_POST]: (state, action) =>
-      produce(state, (draft) => {
-        draft.list = action.payload.post_list;
-      }),
-    [ADD_POST]: (state, action) =>
-      produce(state, (draft) => {
-        draft.list.unshift(action.payload.post);
-      }),
-    [EDIT_POST]: (state, action) =>
-      produce(state, (draft) => {
-        let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
-        draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
-      }),
-    [DELETE_POST]: (state, action) =>
-      produce(state, (draft) => {
-        draft.list.filter((p) => p.id !== action.payload.post_id);
-      }),
-			[LIKE_POST]: (state, action) => produce(state, (draft) => {
-
-			})
-  },
-  initialState
-);
+export default handleActions({
+  [SET_POST]: (state, action) =>
+    produce(state, (draft) => {
+      draft.list = action.payload.post_list;
+    }),
+  [ADD_POST]: (state, action) =>
+    produce(state, (draft) => {
+      draft.list.unshift(action.payload.post);
+    }),
+  [EDIT_POST]: (state, action) =>
+    produce(state, (draft) => {
+      let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
+      draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
+    }),
+  [DELETE_POST]: (state, action) =>
+    produce(state, (draft) => {
+      draft.list.filter((p) => p.id !== action.payload.post_id);
+    }),
+  [LIKE_POST]: (state, action) => produce(state, (draft) => {}),
+  [LOADING]: (state, action) => produce(state, (draft) => {
+		draft.is_loading = action.payload.is_loading;
+	}),
+  initialState,
+});
 
 const actionCreators = {
   setPost,
   addPost,
   editPost,
   deletePost,
-	likePost,
+  likePost,
   getPostFB,
   addPostFB,
   editPostFB,
   deletePostFB,
-	likePostFB,
+  likePostFB,
 };
 
 export { actionCreators };
