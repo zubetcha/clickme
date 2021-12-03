@@ -20,7 +20,6 @@ const Input = (props) => {
     value,
     radio,
     name,
-		checked,
 		_onClick,
   } = props;
 
@@ -70,6 +69,7 @@ const Input = (props) => {
         type={type}
         placeholder={placeholder}
         onChange={_onChange}
+				value={value}
         {...styles}
       ></InputArea>
       <LabelArea margin="0" size={size}>
@@ -80,7 +80,6 @@ const Input = (props) => {
 };
 
 Input.defaultProps = {
-	checked: false,
   name: "",
   value: "",
   multiLine: false,

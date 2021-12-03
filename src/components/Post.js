@@ -36,7 +36,6 @@ const Post = (props) => {
   const minutesGap = Math.floor(
     moment.duration(now.diff(props.insert_dt)).asMinutes()
   );
-  console.log(daysGap, hoursGap, minutesGap);
 
   return (
     <React.Fragment>

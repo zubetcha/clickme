@@ -5,54 +5,39 @@ import Post from "../components/Post";
 import CommentList from "../components/CommentList";
 import CommentWrite from "../components/CommentWrite";
 
-import { useSelector } from "react-redux";
-import { firestore } from "../shared/firebase";
-import { getDoc, doc } from "@firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators as postActions } from "../redux/modules/post";
 
 const PostDetail = (props) => {
+
+	const dispatch = useDispatch();
+
   const id = props.match.params.id;
 
   const user_info = useSelector((state) => state.user.user);
   const post_list = useSelector((store) => store.post.list);
 
   const post_idx = post_list.findIndex((p) => p.id === id);
-  const post_data = post_list[post_idx];
-
-  const [post, setPost] = React.useState(post_data ? post_data : null);
+  const post = post_list[post_idx];
 
   React.useEffect(() => {
 
 		if (post) {
 			return;
 		}
+		
+		dispatch(postActions.getOnePostFB(id))
 
-		const postDB = firestore.collection("post");
-		postDB.doc(id).get().then(doc => {
-			let _post = doc.data();
-      let post = Object.keys(_post).reduce(
-        (acc, cur) => {
-          if (cur.indexOf("user_") !== -1) {
-            return {
-              ...acc,
-              user_info: { ...acc.user_info, [cur]: _post[cur] },
-            };
-          }
-          return { ...acc, [cur]: _post[cur] };
-        },
-        { id: doc.id, user_info: {} }
-      );
-      setPost(post);
-		})
   }, []);
 
   return (
     <React.Fragment>
 			<Grid margin="100px 0 0 0">
 			{post && (
-        <Post {...post} is_me={post.user_info.user_id === user_info.uid} />
+        <Post {...post} is_me={post.user_info.user_id === user_info?.uid} />
       )}
-      <CommentWrite />
-      <CommentList />
+      <CommentWrite post_id={id}/>
+      <CommentList post_id={id}/>
 			</Grid>
       
     </React.Fragment>

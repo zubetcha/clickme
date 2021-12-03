@@ -13,7 +13,7 @@ import {
   startAt,
 } from "@firebase/firestore";
 import "moment";
-import "moment/locale/ko"
+import "moment/locale/ko";
 
 import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
@@ -60,7 +60,7 @@ const initialPost = {
   image_url:
     "https://cdn.shopify.com/s/files/1/0969/9128/products/FRD4_1_8138c99c-236c-45e4-aa64-74dd876697da.jpg?v=1561202243",
   contents: "",
-	layout: "",
+  layout: "",
   comment_cnt: 0,
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
 };
@@ -126,7 +126,6 @@ const getPostFB = (start = null, size = 3) => {
 
 const addPostFB = (contents = "", layout = "") => {
   return async function (dispatch, getState, { history }) {
-
     const _user = getState().user.user;
 
     const user_info = {
@@ -137,7 +136,7 @@ const addPostFB = (contents = "", layout = "") => {
 
     const _post = {
       ...initialPost,
-			layout: layout,
+      layout: layout,
       contents: contents,
       insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
     };
@@ -239,8 +238,8 @@ const deletePostFB = (post_id, image) => {
       .then(() => {
         dispatch(deletePost(post_id));
         _image.delete().then(() => {
-					window.location.reload();
-				})
+          window.location.reload();
+        });
       })
       .catch((err) => {
         console.log("게시글 삭제에 문제가 발생했습니다", err);
@@ -257,6 +256,31 @@ const likePostFB = (post_id) => {
   };
 };
 
+const getOnePostFB = (id) => {
+  return async function (dispatch, getState, { history }) {
+    const postDB = firestore.collection("post");
+    postDB
+      .doc(id)
+      .get()
+      .then((doc) => {
+        let _post = doc.data();
+        let post = Object.keys(_post).reduce(
+          (acc, cur) => {
+            if (cur.indexOf("user_") !== -1) {
+              return {
+                ...acc,
+                user_info: { ...acc.user_info, [cur]: _post[cur] },
+              };
+            }
+            return { ...acc, [cur]: _post[cur] };
+          },
+          { id: doc.id, user_info: {} }
+        );
+        dispatch(setPost([post]));
+      });
+  };
+};
+
 // **************** Reducer **************** //
 
 export default handleActions(
@@ -264,7 +288,19 @@ export default handleActions(
     [SET_POST]: (state, action) =>
       produce(state, (draft) => {
         draft.list.push(...action.payload.post_list);
-        draft.paging = action.payload.paging;
+
+        draft.list = draft.list.reduce((acc, cur) => {
+          if (acc.findIndex((a) => a.id === cur.id) === -1) {
+            return [...acc, cur];
+          } else {
+            acc[acc.findIndex((a) => a.id === cur.id)] = cur;
+            return acc;
+          }
+        }, []);
+
+        if (action.payload.paging) {
+          draft.paging = action.payload.paging;
+        }
         draft.is_loading = false;
       }),
     [ADD_POST]: (state, action) =>
@@ -300,7 +336,8 @@ const actionCreators = {
   editPostFB,
   deletePostFB,
   likePostFB,
-	loading,
+  loading,
+	getOnePostFB,
 };
 
 export { actionCreators };
