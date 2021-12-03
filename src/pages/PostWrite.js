@@ -6,7 +6,7 @@ import Upload from "../shared/Upload";
 import { actionCreators as postActions } from "../redux/modules/post";
 import { actionCreators as imageActions } from "../redux/modules/image";
 
-import Spinner from "../icons/spinner-bar.svg";
+import Album from "../icons/Lovepik_com-400306429-photo-album.png";
 
 const PostWrite = (props) => {
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const PostWrite = (props) => {
 
   const { history } = props;
 
+  const [layout, setLayout] = React.useState(_post ? _post.layout : "");
   const [contents, setContents] = React.useState(_post ? _post.contents : "");
 
   React.useEffect(() => {
@@ -30,7 +31,6 @@ const PostWrite = (props) => {
       return;
     }
 
-
     if (is_edit) {
       dispatch(imageActions.setPreview(_post.image_url));
     }
@@ -40,23 +40,29 @@ const PostWrite = (props) => {
     setContents(e.target.value);
   };
 
-  const addPost = () => {
-		if (preview === null || contents === "") {
-			window.alert("이미지 업로드와 게시글 작성을 모두 완료해주세요!");
-			return;
-		} else {
-			dispatch(postActions.addPostFB(contents));
-		}
+  const handleLayout = (e) => {
+    setLayout(e.target.value);
   };
 
-	const editPost = () => {
-		if (preview === null || contents === "") {
-			window.alert("이미지 업로드와 게시글 작성을 모두 완료해주세요!");
-			return;
-		} else {
-			dispatch(postActions.editPostFB(post_id, {contents: contents}));
-		}
-	}
+  const addPost = () => {
+    if (preview === null || contents === "" || layout === "") {
+      window.alert("이미지 업로드와 레이아웃 선택, 게시글 작성을 모두 완료해주세요!");
+      return;
+    } else {
+      dispatch(postActions.addPostFB(contents, layout));
+    }
+  };
+
+	console.log(layout);
+
+  const editPost = () => {
+    if (preview === null || contents === "" || layout === "") {
+      window.alert("이미지 업로드와 레이아웃 선택, 게시글 작성을 모두 완료해주세요!");
+      return;
+    } else {
+      dispatch(postActions.editPostFB(post_id, { contents: contents, layout: layout }));
+    }
+  };
 
   if (!is_login) {
     return (
@@ -79,23 +85,67 @@ const PostWrite = (props) => {
   return (
     <React.Fragment>
       <Grid padding="16px">
-        <Text margin="0" size="36px" bold>
+        <Text margin="20px 0" size="36px" bold>
           {is_edit ? "게시글 수정" : "게시글 작성"}
         </Text>
         <Upload />
       </Grid>
-      <Grid>
-        <Grid padding="16px">
-          <Text margin="0" size="24px" bold>
-            미리보기
-          </Text>
+      <Grid padding="16px">
+        <Text margin="0" size="24px" bold>
+          레이아웃 선택
+        </Text>
+      </Grid>
+
+      <Grid margin="20px 16px">
+        <Input
+          radio
+          label="텍스트 우측"
+          name="layout"
+          value="textRight"
+          _onClick={handleLayout}
+        ></Input>
+        <Grid is_flex>
+          <Image
+            shape="rectangle"
+            margin="0"
+            size="16"
+            src={preview ? preview : Album}
+          />
+          <Grid />
         </Grid>
       </Grid>
-      <Image
-        shape="rectangle"
-        margin="auto"
-        src={preview ? preview : Spinner}
-      />
+      <Grid margin="20px 16px">
+        <Input
+          radio
+          label="텍스트 좌측"
+          name="layout"
+          value="textLeft"
+          _onClick={handleLayout}
+        ></Input>
+        <Grid is_flex>
+          <Grid />
+          <Image
+            shape="rectangle"
+            margin="0"
+            size="16"
+            src={preview ? preview : Album}
+          />
+        </Grid>
+      </Grid>
+      <Grid margin="20px 16px">
+        <Input
+          radio
+          label="텍스트 상단"
+          name="layout"
+          value="textTop"
+          _onClick={handleLayout}
+        ></Input>
+        <Image
+          shape="rectangle"
+          margin="auto"
+          src={preview ? preview : Album}
+        />
+      </Grid>
       <Grid padding="16px">
         <Input
           value={contents}

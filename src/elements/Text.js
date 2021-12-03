@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Text = (props) => {
-    const { bold, color, size, margin, height, vertical, children, cursor, _onClick } = props;
+    const { bold, color, size, margin, height, vertical, children, cursor, textAlign, _onClick } = props;
 
     const styles = {
         bold: bold, 
@@ -13,6 +13,7 @@ const Text = (props) => {
         height: height,
         vertical: vertical,
         cursor: cursor,
+				textAlign: textAlign,
     }
     return (
         <P {...styles} onClick={_onClick}>
@@ -27,9 +28,10 @@ Text.defaultProps = {
     color: '#333',
     size: '14px',
     margin: false,
-    height: false,
+    height: '',
     vertical: false,
     cursor: 'default',
+		textAlign: 'left',
     _onClick: () => {},
 }
 
@@ -41,6 +43,7 @@ const P = styled.p`
     ${(props) => (props.height ? `height: ${props.height};` : "")};
     ${(props) => (props.vertical ? `vertical-align: ${props.vertical};` : "")};
     cursor: ${(props) => props.cursor};
+		text-align: ${(props) => props.textAlign};
 `;
 
 export default Text;

@@ -35,13 +35,13 @@ const PostList = (props) => {
           {post_list.map((p, idx) => {
             if (p.user_info.user_id === user_info?.uid) {
               return (
-								<Grid bg="#888" key={p.id}>
+								<Grid bg="" key={p.id}>
 									<Post {...p} is_me />
 								</Grid>
 							);
             } else {
               return (
-								<Grid bg="#888" key={p.id}>
+								<Grid bg="" key={p.id}>
 									<Post {...p} />
 								</Grid>
 							) 

@@ -13,6 +13,7 @@ import {
   startAt,
 } from "@firebase/firestore";
 import "moment";
+import "moment/locale/ko"
 
 import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
@@ -59,6 +60,7 @@ const initialPost = {
   image_url:
     "https://cdn.shopify.com/s/files/1/0969/9128/products/FRD4_1_8138c99c-236c-45e4-aa64-74dd876697da.jpg?v=1561202243",
   contents: "",
+	layout: "",
   comment_cnt: 0,
   insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
 };
@@ -122,7 +124,7 @@ const getPostFB = (start = null, size = 3) => {
   };
 };
 
-const addPostFB = (contents = "") => {
+const addPostFB = (contents = "", layout = "") => {
   return async function (dispatch, getState, { history }) {
 
     const _user = getState().user.user;
@@ -135,6 +137,7 @@ const addPostFB = (contents = "") => {
 
     const _post = {
       ...initialPost,
+			layout: layout,
       contents: contents,
       insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
     };
@@ -226,8 +229,8 @@ const editPostFB = (post_id = null, post = {}) => {
 const deletePostFB = (post_id, image) => {
   return async function (dispatch, getState, { history }) {
     if (!post_id) {
-      window.alert("게시물 정보를 받아오고 있습니다. 잠시만 기다려주세요!");
-      return window.location.reload();
+      window.alert("게시물 정보가 없습니다.");
+      return;
     }
 
     const _image = storage.ref().child(`images/${image}`);
