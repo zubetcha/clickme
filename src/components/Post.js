@@ -8,30 +8,26 @@ import { actionCreators as postActions } from "../redux/modules/post";
 
 import { ReactComponent as Edit } from "../icons/edit-regular.svg";
 import { ReactComponent as Delete } from "../icons/trash-alt-regular.svg";
-import { ReactComponent as Heart } from "../icons/heart-solid.svg"
+import { ReactComponent as Heart } from "../icons/heart-solid.svg";
 
 const Post = (props) => {
+  const dispatch = useDispatch();
 
-	const dispatch = useDispatch();
+  const deletePost = () => {
+    let image = props.image_url.split("/")[7].split("?")[0].substring(9);
 
-	const deletePost = () => {
+    if (window.confirm("게시글을 삭제하시겠습니까?")) {
+      return dispatch(postActions.deletePostFB(props.id, image));
+    } else {
+      return;
+    }
+  };
 
-		let image = props.image_url.split('/')[7].split('?')[0].substring(9);
-
-		if (window.confirm('게시글을 삭제하시겠습니까?')) {
-			return dispatch(postActions.deletePostFB(props.id, image));
-		} else {
-			return;
-		}
-	}
-
-	const likePost = () => {
-		
-	}
+  const likePost = () => {};
 
   return (
     <React.Fragment>
-      <Grid height="100%" padding="50px 0 0 0">
+      <Grid height="100%">
         <Grid is_flex padding="10px">
           <Grid is_flex width="auto">
             <Image shape="circle" src={props.src} />
@@ -46,27 +42,31 @@ const Post = (props) => {
                 }}
               />
             )}
-            {props.is_me && <Delete style={{ width: "14px" }} onClick={deletePost} />}
+            {props.is_me && (
+              <Delete style={{ width: "14px" }} onClick={deletePost} />
+            )}
           </Grid>
         </Grid>
-        <Grid padding="0 10px">
-          <Text color="grey" size="14px">
-            {props.contents}
-          </Text>
-        </Grid>
-        <Grid>
-          <Image shape="rectangle" src={props.image_url} />
-        </Grid>
-        <Grid padding="0 10px" is_flex>
-          <Text vertical="middle" height="inherit">
-            <Heart
-              style={{
-                width: "16px",
-              }}
-            />{" "}
-            좋아요 {props.comment_cnt}개
-          </Text>
-          <Text size="10px">{props.insert_dt}</Text>
+        <Grid _onClick={() => {history.push(`/post/${props.id}`);}}>
+          <Grid padding="0 10px">
+            <Text color="grey" size="14px">
+              {props.contents}
+            </Text>
+          </Grid>
+          <Grid>
+            <Image shape="rectangle" src={props.image_url} />
+          </Grid>
+          <Grid padding="0 10px" is_flex>
+            <Text vertical="middle" height="inherit">
+              <Heart
+                style={{
+                  width: "16px",
+                }}
+              />{" "}
+              좋아요 {props.comment_cnt}개
+            </Text>
+            <Text size="10px">{props.insert_dt}</Text>
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

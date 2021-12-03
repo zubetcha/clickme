@@ -161,7 +161,6 @@ const addPostFB = (contents = "") => {
               let post = { user_info, ..._post, id: docRef.id, image_url: url };
               dispatch(addPost(post));
               history.replace("/");
-              console.log(post);
 
               dispatch(imageActions.setPreview(null));
             });

@@ -20,7 +20,7 @@ const Header = (props) => {
     return (
       <Permit>
         <React.Fragment>
-          <Grid is_flex padding="4px 0">
+          <Grid is_flex padding="4px 0" margin="0 0 40px 0">
             <Grid>
               <Text margin="0px" size="24px" bold
                 cursor="default"
@@ -50,7 +50,7 @@ const Header = (props) => {
 
   return (
     <React.Fragment>
-      <Grid is_flex padding="4px 0">
+      <Grid is_flex padding="4px 0" margin="0 0 40px 0">
         <Grid>
           <Text margin="0px" size="24px" bold
           cursor="default"

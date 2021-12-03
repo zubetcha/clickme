@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Post from "../components/Post";
 import InfinityScroll from "../shared/InfinityScroll";
 import { actionCreators as postActions } from "../redux/modules/post";
+import { Grid } from "../elements";
 
 const PostList = (props) => {
   const dispatch = useDispatch();
@@ -33,9 +34,17 @@ const PostList = (props) => {
         >
           {post_list.map((p, idx) => {
             if (p.user_info.user_id === user_info?.uid) {
-              return <Post key={p.id} {...p} is_me />;
+              return (
+								<Grid bg="#888" key={p.id}>
+									<Post {...p} is_me />
+								</Grid>
+							);
             } else {
-              return <Post key={p.id} {...p} />;
+              return (
+								<Grid bg="#888" key={p.id}>
+									<Post {...p} />
+								</Grid>
+							) 
             }
           })}
         </InfinityScroll>
