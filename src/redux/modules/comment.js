@@ -3,6 +3,9 @@ import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
 import "moment";
 import moment from "moment";
+import { doc, addDoc, updateDoc, collection } from "@firebase/firestore";
+import firebase from "firebase/compat/app";
+import { actionCreators as postActions } from "./post";
 
 
 // ************* Action Type ************* //
@@ -35,6 +38,38 @@ const initialState = {
 
 
 // ************* Middlewares ************* //
+
+const addCommentFB = (post_id, contents) => {
+	return async function (dispatch, getState, {history}) {
+
+		const user_info = getState().user.user;
+
+		let comment = {
+			post_id: post_id,
+			user_id: user_info.uid,
+			user_name: user_info.user_name,
+			user_profile: user_info.user_profile,
+			contents: contents,
+			insert_dt: moment().format("YYYY-MM-DD hh:mm:ss")
+		}
+
+		const cmtRef = await addDoc(collection(firestore, "comment"), {...comment});
+
+		comment = {...comment, id: cmtRef.id};
+
+		const post = getState().post.list.find(el => el.id === post_id);
+
+		const increment = firebase.firestore.FieldValue.increment(1);
+		
+		const _post = await updateDoc(doc(firestore, "post", post_id), {comment_cnt: increment});
+
+		dispatch(addComment(post_id, comment))
+		
+		if (post) {
+			dispatch(postActions.editPost(post_id, {comment_cnt: parseInt(post.comment_cnt) + 1}))
+		}	
+	}
+}
 
 const getCommentFB = (post_id) => {
   return function (dispatch, getState, { history }) {
@@ -70,7 +105,9 @@ export default handleActions(
     [SET_COMMENT]: (state, action) => produce(state, (draft) => {
 			draft.list[action.payload.post_id] = action.payload.comment_list;
 		}),
-    [ADD_COMMENT]: (state, action) => produce(state, (draft) => {}),
+    [ADD_COMMENT]: (state, action) => produce(state, (draft) => {
+			draft.list[action.payload.post_id].push(action.payload.comment);
+		}),
     [LOADING]: (state, action) =>
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;
@@ -84,6 +121,7 @@ export default handleActions(
 
 const actionCreators = {
   getCommentFB,
+	addCommentFB,
   setComment,
   addComment,
 };
