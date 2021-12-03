@@ -25,6 +25,7 @@ const Post = (props) => {
       return;
     }
   };
+	
   const now = moment();
 
   const daysGap = Math.floor(
@@ -105,7 +106,7 @@ const Post = (props) => {
           )}
         </Grid>
         <Grid>
-          <Grid padding="0 10px" is_flex>
+          <Grid padding="0 16px" is_flex>
             <Grid is_flex width="auto">
               <Grid margin="0 15px 0 0">
                 <Text vertical="middle" height="inherit">

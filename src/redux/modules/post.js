@@ -14,9 +14,8 @@ import {
 } from "@firebase/firestore";
 import "moment";
 import "moment/locale/ko";
-
-import { firestore, storage } from "../../shared/firebase";
 import moment from "moment";
+import { firestore, storage } from "../../shared/firebase";
 import { actionCreators as imageActions } from "./image";
 
 // **************** Action Type **************** //
@@ -25,7 +24,6 @@ const SET_POST = "SET_POST";
 const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const DELETE_POST = "DELETE_POST";
-const LIKE_POST = "LIKE_POST";
 const LOADING = "LOADING";
 
 // **************** Action Creators **************** //
@@ -40,7 +38,6 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
   post,
 }));
 const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
-const likePost = createAction(LIKE_POST, (post_id) => ({ post_id }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 
 // **************** Initial Data **************** //
@@ -62,7 +59,8 @@ const initialPost = {
   contents: "",
   layout: "",
   comment_cnt: 0,
-  insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+	like_cnt: 0,
+  insert_dt: moment().format("YYYY-MM-DD HH:mm:ss"),
 };
 
 // **************** Middlewares **************** //
@@ -138,7 +136,7 @@ const addPostFB = (contents = "", layout = "") => {
       ...initialPost,
       layout: layout,
       contents: contents,
-      insert_dt: moment().format("YYYY-MM-DD hh:mm:ss"),
+      insert_dt: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
 
     const _image = getState().image.preview;
@@ -247,14 +245,6 @@ const deletePostFB = (post_id, image) => {
   };
 };
 
-const likePostFB = (post_id) => {
-  return async function (dispatch, getState, { history }) {
-    if (!post_id) {
-      window.alert("게시물 정보를 받아오고 있습니다. 잠시만 기다려주세요!");
-      return window.location.reload();
-    }
-  };
-};
 
 const getOnePostFB = (id) => {
   return async function (dispatch, getState, { history }) {
@@ -316,7 +306,6 @@ export default handleActions(
       produce(state, (draft) => {
         draft.list.filter((p) => p.id !== action.payload.post_id);
       }),
-    [LIKE_POST]: (state, action) => produce(state, (draft) => {}),
     [LOADING]: (state, action) =>
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;
@@ -325,17 +314,18 @@ export default handleActions(
   initialState
 );
 
+
+// **************** Export **************** //
+
 const actionCreators = {
   setPost,
   addPost,
   editPost,
   deletePost,
-  likePost,
   getPostFB,
   addPostFB,
   editPostFB,
   deletePostFB,
-  likePostFB,
   loading,
 	getOnePostFB,
 };

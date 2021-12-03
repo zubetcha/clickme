@@ -21,6 +21,8 @@ const Input = (props) => {
     radio,
     name,
 		_onClick,
+		is_submit,
+		onSubmit,
   } = props;
 
   const styles = {
@@ -65,16 +67,32 @@ const Input = (props) => {
 
   return (
     <React.Fragment>
-      <InputArea
+			<LabelArea margin="0" size={size}>
+        {label}
+      </LabelArea>
+			{is_submit ? (<InputArea
         type={type}
         placeholder={placeholder}
         onChange={_onChange}
 				value={value}
+				onKeyPress={(e) => {
+					if(e.key === "Enter") {
+						onSubmit(e);
+					}
+				}}
         {...styles}
-      ></InputArea>
-      <LabelArea margin="0" size={size}>
-        {label}
-      </LabelArea>
+      ></InputArea>)
+		: (<InputArea
+			type={type}
+			placeholder={placeholder}
+			onChange={_onChange}
+			onKeyPress={(e) => {
+				if(e.key === "Enter") {
+					onSubmit(e);
+				}
+			}}
+			{...styles}
+		></InputArea>)} 
     </React.Fragment>
   );
 };
@@ -87,6 +105,8 @@ Input.defaultProps = {
   label: false,
   placeholder: "텍스트를 입력해주세요.",
   type: "text",
+	is_submit: false,
+	onSubmit: () => {},
   _onChange: () => {},
 	_onClick: () => {},
 };

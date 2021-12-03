@@ -3,6 +3,7 @@ import { produce } from "immer";
 import { firestore } from "../../shared/firebase";
 import "moment";
 import moment from "moment";
+import "moment/locale/ko";
 import { doc, addDoc, updateDoc, collection } from "@firebase/firestore";
 import firebase from "firebase/compat/app";
 import { actionCreators as postActions } from "./post";
@@ -50,7 +51,7 @@ const addCommentFB = (post_id, contents) => {
 			user_name: user_info.user_name,
 			user_profile: user_info.user_profile,
 			contents: contents,
-			insert_dt: moment().format("YYYY-MM-DD hh:mm:ss")
+			insert_dt: moment().format("YYYY-MM-DD HH:mm:ss")
 		}
 
 		const cmtRef = await addDoc(collection(firestore, "comment"), {...comment});
@@ -61,7 +62,7 @@ const addCommentFB = (post_id, contents) => {
 
 		const increment = firebase.firestore.FieldValue.increment(1);
 		
-		const _post = await updateDoc(doc(firestore, "post", post_id), {comment_cnt: increment});
+		await updateDoc(doc(firestore, "post", post_id), {comment_cnt: increment});
 
 		dispatch(addComment(post_id, comment))
 		
@@ -106,7 +107,7 @@ export default handleActions(
 			draft.list[action.payload.post_id] = action.payload.comment_list;
 		}),
     [ADD_COMMENT]: (state, action) => produce(state, (draft) => {
-			draft.list[action.payload.post_id].push(action.payload.comment);
+			draft.list[action.payload.post_id].unshift(action.payload.comment);
 		}),
     [LOADING]: (state, action) =>
       produce(state, (draft) => {

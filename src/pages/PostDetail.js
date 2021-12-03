@@ -4,6 +4,7 @@ import { Grid } from "../elements";
 import Post from "../components/Post";
 import CommentList from "../components/CommentList";
 import CommentWrite from "../components/CommentWrite";
+import Permit from "../shared/Permit";
 
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as postActions } from "../redux/modules/post";
@@ -36,7 +37,9 @@ const PostDetail = (props) => {
 			{post && (
         <Post {...post} is_me={post.user_info.user_id === user_info?.uid} />
       )}
+			<Permit>
       <CommentWrite post_id={id}/>
+			</Permit>
       <CommentList post_id={id}/>
 			</Grid>
       
