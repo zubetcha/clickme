@@ -54,12 +54,13 @@ const PostList = (props) => {
 };
 
 const Container = styled.div`
+	margin-top: 100px;
   max-width: 800px;
   height: 100%;
 
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 800px));
-  gap: 50px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 800px));
+  gap: 2%;
 `;
 
 export default PostList;

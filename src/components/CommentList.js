@@ -35,10 +35,10 @@ const CommentItem = (props) => {
 
   return (
     <React.Fragment>
-      <Grid is_flex>
+      <Grid is_flex margin="6px 0">
         <Grid is_flex width="auto">
           <Image shape="circle" />
-          <Text bold>{user_name}</Text>
+          <Text bold margin="0 0 0 5px">{user_name}</Text>
         </Grid>
         <Grid is_flex margin="0 4px">
           <Text margin="0 0 0 10px">{contents}</Text>

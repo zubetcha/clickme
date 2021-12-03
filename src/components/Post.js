@@ -2,7 +2,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
-import "moment/locale/ko"
+import "moment/locale/ko";
 
 import { Button, Grid, Image, Text } from "../elements";
 import { history } from "../redux/configureStore";
@@ -25,12 +25,18 @@ const Post = (props) => {
       return;
     }
   };
-	const now = moment();
+  const now = moment();
 
-	const daysGap = Math.floor(moment.duration(now.diff(props.insert_dt)).asDays());
-	const hoursGap = Math.floor(moment.duration(now.diff(props.insert_dt)).asHours());
-	const minutesGap = Math.floor(moment.duration(now.diff(props.insert_dt)).asMinutes());
-	console.log(daysGap, hoursGap, minutesGap)
+  const daysGap = Math.floor(
+    moment.duration(now.diff(props.insert_dt)).asDays()
+  );
+  const hoursGap = Math.floor(
+    moment.duration(now.diff(props.insert_dt)).asHours()
+  );
+  const minutesGap = Math.floor(
+    moment.duration(now.diff(props.insert_dt)).asMinutes()
+  );
+  console.log(daysGap, hoursGap, minutesGap);
 
   return (
     <React.Fragment>
@@ -38,7 +44,9 @@ const Post = (props) => {
         <Grid is_flex padding="10px" borderBottom="0.5px solid #333">
           <Grid is_flex width="auto">
             <Image shape="circle" src={props.src} />
-            <Text bold>{props.user_info.user_name}</Text>
+            <Text bold margin="0 0 0 5px">
+              {props.user_info.user_name}
+            </Text>
           </Grid>
           <Grid is_flex width="auto">
             {props.is_me && (
@@ -55,7 +63,7 @@ const Post = (props) => {
           </Grid>
         </Grid>
         <Grid
-				margin="10px 0 0 0"
+          margin="20px 0 0 0"
           _onClick={() => {
             history.push(`/post/${props.id}`);
           }}
@@ -96,10 +104,11 @@ const Post = (props) => {
               </Grid>
             </Grid>
           )}
-
+        </Grid>
+        <Grid>
           <Grid padding="0 10px" is_flex>
             <Grid is_flex width="auto">
-              <Grid margin= "0 15px 0 0">
+              <Grid margin="0 15px 0 0">
                 <Text vertical="middle" height="inherit">
                   <Heart
                     style={{
@@ -120,9 +129,13 @@ const Post = (props) => {
                 </Text>
               </Grid>
             </Grid>
-						{minutesGap < 60 && (<Text size="10px">{minutesGap}분 전</Text>)}
-						{minutesGap > 60 && minutesGap < 1440 && (<Text size="10px">{hoursGap}시간 {minutesGap%60}분 전</Text>)}
-						{minutesGap > 1440 && (<Text size="10px">{daysGap}일 전</Text>)}
+            {minutesGap < 60 && <Text size="10px">{minutesGap}분 전</Text>}
+            {minutesGap > 60 && minutesGap < 1440 && (
+              <Text size="10px">
+                {hoursGap}시간 {minutesGap % 60}분 전
+              </Text>
+            )}
+            {minutesGap > 1440 && <Text size="10px">{daysGap}일 전</Text>}
           </Grid>
         </Grid>
       </Grid>

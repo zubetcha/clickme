@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Grid = (props) => {
-    const { is_flex, minWidth, maxWidth, width, height, margin, padding, bg, children, center, borderBottom, _onClick, } = props;
+    const { is_flex, minWidth, maxWidth, width, height, margin, padding, bg, children, center, borderBottom, position, zIndex, top, left, border, _onClick, } = props;
     
     const styles = {
         is_flex: is_flex,
@@ -16,6 +16,11 @@ const Grid = (props) => {
         bg: bg,
         center: center,
 				borderBottom: borderBottom,
+				position: position,
+				zIndex: zIndex,
+				top: top,
+				left: left,
+				border: border,
     };
     return (
         <React.Fragment>
@@ -36,6 +41,11 @@ Grid.defaultProps = {
     bg: false,
     center:false,
 		borderBottom: false,
+		position: false,
+		zIndex: 0,
+		top: false,
+		left: false,
+		border:false,
 		_onClick: () => {},
 }
 
@@ -51,6 +61,12 @@ const Gridbox = styled.div`
     ${(props) => props.is_flex? `display: flex; align-items: center; justify-content: space-between;` : ""}
     ${(props) => props.center? `text-align: center;` : ""}
     ${(props) => props.borderBottom? `border-bottom: ${props.borderBottom};` : ""}
+    ${(props) => props.position? `position: ${props.position};` : ""}
+    ${(props) => props.zIndex? `z-index: ${props.zIndex};` : ""}
+    ${(props) => props.top? `top: ${props.top};` : ""}
+    ${(props) => props.left? `left: ${props.left};` : ""}
+    ${(props) => props.border? `border: ${props.border};` : ""}
+
 `;
 
 

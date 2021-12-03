@@ -1,4 +1,6 @@
 import React from "react";
+
+import { Grid } from "../elements";
 import Post from "../components/Post";
 import CommentList from "../components/CommentList";
 import CommentWrite from "../components/CommentWrite";
@@ -45,11 +47,14 @@ const PostDetail = (props) => {
 
   return (
     <React.Fragment>
-      {post && (
+			<Grid margin="100px 0 0 0">
+			{post && (
         <Post {...post} is_me={post.user_info.user_id === user_info.uid} />
       )}
       <CommentWrite />
       <CommentList />
+			</Grid>
+      
     </React.Fragment>
   );
 };

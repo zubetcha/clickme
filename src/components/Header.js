@@ -20,10 +20,10 @@ const Header = (props) => {
     return (
       <Permit>
         <React.Fragment>
-          <Grid is_flex padding="4px 0" margin="0 0 40px 0">
-            <Grid>
+          <Grid is_flex maxWidth="800px" minWidth="400px" padding="20px 0" margin="0" bg="#FBF6EF" position="fixed" top="0" zIndex="2">
+            <Grid margin="0 0 0 10px">
               <Text margin="0px" size="24px" bold
-                cursor="default"
+                cursor="pointer"
                 _onClick={() => {
                   history.push("/");
                 }}>
@@ -50,10 +50,10 @@ const Header = (props) => {
 
   return (
     <React.Fragment>
-      <Grid is_flex padding="4px 0" margin="0 0 40px 0">
-        <Grid>
+      <Grid is_flex maxWidth="800px" minWidth="400px" padding="20px 0" margin="0" bg="#FBF6EF" position="fixed" top="0" zIndex="2">
+        <Grid margin="0 0 0 10px">
           <Text margin="0px" size="24px" bold
-          cursor="default"
+          cursor="pointer"
             _onClick={() => {
               history.push("/");
             }}

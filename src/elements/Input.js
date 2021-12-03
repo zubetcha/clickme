@@ -56,10 +56,10 @@ const Input = (props) => {
   if (radio) {
     return (
       <React.Fragment>
-        <label htmlFor="radio">
+        <LabelArea htmlFor="radio">
           <input type="radio" name={name} value={value} onClick={_onClick} />
           {label}
-        </label>
+        </LabelArea>
       </React.Fragment>
     );
   }
@@ -105,7 +105,7 @@ const ElTextarea = styled.textarea`
 `;
 
 const LabelArea = styled.label`
-  font-size: 12px;
+  font-size: 14px;
 `;
 
 const InputArea = styled.input`
