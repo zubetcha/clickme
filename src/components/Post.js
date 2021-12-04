@@ -4,12 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
 import "moment/locale/ko";
 
-import { Button, Grid, Image, Text } from "../elements";
+import { Grid, Image, Text } from "../elements";
 import HeartStatus from "./HeartStatus";
 import { history } from "../redux/configureStore";
 import { actionCreators as postActions } from "../redux/modules/post";
 
-import { ReactComponent as Heart } from "../icons/heart-solid.svg";
 import { ReactComponent as Comment } from "../icons/comment-dots-regular.svg";
 import { ReactComponent as Edit } from "../icons/edit-regular.svg";
 import { ReactComponent as Delete } from "../icons/trash-alt-regular.svg";
@@ -128,12 +127,6 @@ const Post = (props) => {
                   is_me={post.user_info.user_id === user_info?.uid}
                   liked={props.liked}
                 />
-                {/* <Heart
-                  style={{
-                    width: "20px",
-										marginRight: "6px",
-                  }}
-                /> */}
                 <Text vertical="middle" height="inherit">
                   {props.like_cnt}
                 </Text>

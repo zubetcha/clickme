@@ -4,7 +4,7 @@ import "moment/locale/ko";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Grid, Image, Text } from "../elements";
-import comment, { actionCreators as commentActions } from "../redux/modules/comment";
+import { actionCreators as commentActions } from "../redux/modules/comment";
 
 
 const CommentList = (props) => {
