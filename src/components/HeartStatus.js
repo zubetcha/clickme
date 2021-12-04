@@ -22,8 +22,8 @@ const HeartStatus = (props) => {
         <Heart
           className="like_icon"
           style={{
-            width: "20px",
-            marginRight: "6px",
+            width: "18px",
+            marginRight: "4px",
           }}
 				liked={props.liked}
           onClick={() => {
@@ -38,8 +38,8 @@ const HeartStatus = (props) => {
     <div>
       <Heart
         style={{
-          width: "20px",
-          marginRight: "6px",
+          width: "18px",
+          marginRight: "4px",
           color: "#333",
         }}
         onClick={() => {

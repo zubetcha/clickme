@@ -76,7 +76,8 @@ const Post = (props) => {
           </Grid>
         </Grid>
         <Grid
-          margin="20px 0 0 0"
+				 borderBottom="0.5px solid #333"
+					padding="20px 0"
           _onClick={() => {
             history.push(`/post/${props.id}`);
           }}
@@ -121,7 +122,7 @@ const Post = (props) => {
         <Grid>
           <Grid padding="0 16px" is_flex>
             <Grid is_flex width="auto">
-              <Grid width="auto" margin="0 18px 0 0" is_flex>
+              <Grid width="auto" margin="0 15px 0 0" is_flex>
                 <HeartStatus
                   {...post}
                   is_me={post.user_info.user_id === user_info?.uid}
@@ -141,7 +142,7 @@ const Post = (props) => {
                 <Comment
                   style={{
                     width: "20px",
-                    marginRight: "6px",
+                    marginRight: "4px",
                   }}
                 />
                 <Text vertical="middle" height="inherit">
