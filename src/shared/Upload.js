@@ -1,8 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-
-import { Button } from "../elements";
 import { storage } from "./firebase";
 import { actionCreators as imageActions } from "../redux/modules/image";
 
@@ -22,6 +20,7 @@ const Upload = (props) => {
         reader.readAsDataURL(file);
 
         reader.onloadend = () => {
+
             dispatch(imageActions.setPreview(reader.result));
 						dispatch(imageActions.uploading(false));
         }

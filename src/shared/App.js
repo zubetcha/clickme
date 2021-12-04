@@ -1,8 +1,7 @@
 import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "../redux/configureStore";
-import styled from "styled-components";
 import PostList from "../pages/PostList";
 import Login from "../pages/Login";
 import Join from "../pages/Join";
