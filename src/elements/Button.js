@@ -44,6 +44,11 @@ const Btn = styled.button`
     outline: none;
     border: 0;
     box-sizing: border-box;
+		
+		&:hover {
+			background-color: tomato;
+			color: whitesmoke;
+		}
 `;
 
 const FloatButton = styled.button`
@@ -61,6 +66,11 @@ const FloatButton = styled.button`
     vertical-align: middle;
     border: none;
     border-radius: 50%;
+		cursor: pointer;
+
+	&:hover {
+		background-color: #ff8069;
+	}
 `;
 
 export default Button;
