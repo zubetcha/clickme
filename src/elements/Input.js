@@ -138,6 +138,7 @@ const InputArea = styled.input`
   background-color: #fbf6ef;
   &:focus {
     outline: none;
+		border-bottom: 3px solid #ff8069;
   }
 `;
 

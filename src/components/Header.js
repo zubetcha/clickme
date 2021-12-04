@@ -30,9 +30,11 @@ const Header = (props) => {
               </Text>
             </Grid>
             <Grid is_flex>
-              <Button margin="0 5px" text="내정보" _onClick={() => {}}></Button>
+              <Button margin="0 5px" text="내정보" _onClick={() => {
+								window.alert("준비중입니다. 조금만 기다려주세요!")
+							}}></Button>
               <Button margin="0 5px" text="알림" _onClick={() => {
-								history.push("/noti");
+								window.alert("준비중입니다. 조금만 기다려주세요!")
 							}}></Button>
               <Button
 							 margin="0 5px"
@@ -87,8 +89,12 @@ const Header = (props) => {
               </Text>
             </Grid>
             <Grid is_flex>
-              <Button margin="0 5px" text="내정보" _onClick={() => {}}></Button>
-              <Button margin="0 5px" text="알림" _onClick={() => {}}></Button>
+              <Button margin="0 5px" text="내정보" _onClick={() => {
+								window.alert("준비중입니다. 조금만 기다려주세요!")
+							}}></Button>
+              <Button margin="0 5px" text="알림" _onClick={() => {
+								window.alert("준비중입니다. 조금만 기다려주세요!")
+							}}></Button>
               <Button
 							margin="0 5px"
                 text="로그아웃"
