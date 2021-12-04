@@ -54,7 +54,7 @@ const Post = (props) => {
   return (
     <React.Fragment>
       <Grid height="100%">
-        <Grid is_flex padding="10px" borderBottom="0.5px solid #333">
+        <Grid is_flex padding="7px 10px" borderBottom="0.5px solid #333">
           <Grid is_flex width="auto">
             <Grid width="auto">
               <Image shape="circle" src={props.src} />

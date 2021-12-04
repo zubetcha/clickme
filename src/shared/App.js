@@ -47,6 +47,7 @@ function App() {
       </Grid>
       <Permit>
           <Button is_float text="+"
+					width="50px"
           _onClick={() => {
               history.push("/write");
           }}></Button>
