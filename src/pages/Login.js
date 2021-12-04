@@ -1,7 +1,6 @@
 // pages
 import React from "react"; 
 import { Grid, Text, Button, Input } from "../elements";
-import { getCookie, setCookie, deleteCookie } from "../shared/Cookie";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { emailCheck } from "../shared/common";
