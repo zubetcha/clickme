@@ -1,7 +1,7 @@
 // elements
 import React from "react";
 import styled from "styled-components";
-import { Grid, Text } from ".";
+import { Grid } from ".";
 
 const Input = (props) => {
   const {
