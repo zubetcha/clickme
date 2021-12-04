@@ -11,6 +11,8 @@ import {
   orderBy,
   limit,
   startAt,
+	writeBatch,
+	where,
 } from "@firebase/firestore";
 import "moment";
 import "moment/locale/ko";
@@ -25,6 +27,8 @@ const ADD_POST = "ADD_POST";
 const EDIT_POST = "EDIT_POST";
 const DELETE_POST = "DELETE_POST";
 const LOADING = "LOADING";
+const LIKE_POST = "LIKE_POST";
+
 
 // **************** Action Creators **************** //
 
@@ -39,6 +43,8 @@ const editPost = createAction(EDIT_POST, (post_id, post) => ({
 }));
 const deletePost = createAction(DELETE_POST, (post_id) => ({ post_id }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
+const likePost = createAction(LIKE_POST, (post_id, liked) => ({ post_id, liked }));
+
 
 // **************** Initial Data **************** //
 
@@ -60,6 +66,7 @@ const initialPost = {
   layout: "",
   comment_cnt: 0,
 	like_cnt: 0,
+	liked: false,
   insert_dt: moment().format("YYYY-MM-DD HH:mm:ss"),
 };
 
@@ -266,8 +273,101 @@ const getOnePostFB = (id) => {
           },
           { id: doc.id, user_info: {} }
         );
-        dispatch(setPost([post]));
+        dispatch(setLiked([post]));
       });
+  };
+};
+
+const setLiked = (_post_list, paging) => {
+	return async function (dispatch, getState, { history }) {
+		if (!getState().user.is_login) {
+      return;
+    }
+
+    const likeDB = firestore.collection("like");
+    const post_ids = _post_list.map((p) => p.id);
+
+    let like_query = likeDB.where("post_id", "in", post_ids);
+
+    like_query.get().then((like_docs) => {
+      let like_list = {};
+      like_docs.forEach((doc) => {
+        if (like_list[doc.data().post_id]) {
+          like_list[doc.data().post_id] = [
+            ...like_list[doc.data().post_id],
+            doc.data().user_id,
+          ];
+        } else {
+          like_list[doc.data().post_id] = [doc.data().user_id];
+        }
+      });
+
+      const user_id = getState().user.user.uid;
+      let post_list = _post_list.map((p) => {
+        if (like_list[p.id] && like_list[p.id].indexOf(user_id) !== -1) {
+          return { ...p, is_like: true };
+        }
+
+        return p;
+      });
+
+      dispatch(setPost(post_list, paging));
+    });
+  };
+};
+
+const likePostFB = (post_id) => {
+  return async function (dispatch, getState, { history }) {
+		if (!getState().user.user) {
+			return;
+		}
+
+		const postDB = firestore.collection("post");
+    const likeDB = firestore.collection("like");
+    const _idx = getState().post.list.findIndex((p) => p.id === post_id);
+    const _post = getState().post.list[_idx];
+    const user_id = getState().user.user.uid;
+
+    if (_post.liked === true) {
+      likeDB
+        .where("post_id", "==", _post.id)
+        .where("user_id", "==", user_id)
+        .get()
+        .then((docs) => {
+          let batch = firestore.batch();
+
+          docs.forEach((doc) => {
+            batch.delete(likeDB.doc(doc.id));
+          });
+
+          batch.update(postDB.doc(post_id), {
+            like_cnt:
+              _post.like_cnt - 1 < 1 ? _post.like_cnt : _post.like_cnt - 1,
+          });
+
+          batch.commit().then(() => {
+            dispatch(likePost(post_id, false));
+            dispatch(
+              editPost(post_id, { like_cnt: parseInt(_post.like_cnt) - 1 })
+            );
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      likeDB.add({ post_id: post_id, user_id: user_id }).then((doc) => {
+        postDB
+          .doc(post_id)
+          .update({ like_cnt: _post.like_cnt + 1 })
+          .then((doc) => {
+            dispatch(likePost(post_id, true));
+            dispatch(
+              editPost(post_id, { like_cnt: parseInt(_post.like_cnt) + 1 })
+            );
+          });
+      });
+    }
   };
 };
 
@@ -310,6 +410,10 @@ export default handleActions(
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;
       }),
+			[LIKE_POST]: (state, action) => produce(state, (draft) => {
+				let idx = draft.list.findIndex((p) => p.id === action.payload.post_id);
+				draft.list[idx].liked = action.payload.liked;
+			}),
   },
   initialState
 );
@@ -328,6 +432,9 @@ const actionCreators = {
   deletePostFB,
   loading,
 	getOnePostFB,
+	setLiked,
+	likePost,
+	likePostFB,
 };
 
 export { actionCreators };

@@ -86,11 +86,9 @@ const getCommentFB = (post_id) => {
       .get()
       .then((docs) => {
 				let list = [];
-
 				docs.forEach((doc) => {
 					list.push({...doc.data(), id: doc.id});
 				})
-
 				dispatch(setComment(post_id, list));
 			}).catch((err) => {
 				console.log("댓글 정보를 가져올 수 없습니다", err);

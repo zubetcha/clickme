@@ -55,8 +55,6 @@ const PostWrite = (props) => {
     }
   };
 
-  console.log(layout);
-
   const editPost = () => {
     if (preview === null || contents === "" || layout === "") {
       window.alert(

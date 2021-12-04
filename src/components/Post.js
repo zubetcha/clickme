@@ -5,13 +5,14 @@ import moment from "moment";
 import "moment/locale/ko";
 
 import { Button, Grid, Image, Text } from "../elements";
+import HeartStatus from "./HeartStatus";
 import { history } from "../redux/configureStore";
 import { actionCreators as postActions } from "../redux/modules/post";
 
+import { ReactComponent as Heart } from "../icons/heart-solid.svg";
 import { ReactComponent as Comment } from "../icons/comment-dots-regular.svg";
 import { ReactComponent as Edit } from "../icons/edit-regular.svg";
 import { ReactComponent as Delete } from "../icons/trash-alt-regular.svg";
-import { ReactComponent as Heart } from "../icons/heart-solid.svg";
 
 const Post = (props) => {
   const dispatch = useDispatch();
@@ -25,7 +26,20 @@ const Post = (props) => {
       return;
     }
   };
-	
+
+  const user_info = useSelector((state) => state.user.user);
+  const post_list = useSelector((store) => store.post.list);
+  const post_idx = post_list.findIndex((p) => p.id === props.id);
+  const post = post_list[post_idx];
+
+  React.useEffect(() => {
+    if (post) {
+      return;
+    }
+
+    dispatch(postActions.getOnePostFB(props.id));
+  }, []);
+
   const now = moment();
 
   const daysGap = Math.floor(
@@ -108,23 +122,37 @@ const Post = (props) => {
         <Grid>
           <Grid padding="0 16px" is_flex>
             <Grid is_flex width="auto">
-              <Grid margin="0 15px 0 0">
+              <Grid width="auto" margin="0 18px 0 0" is_flex>
+                <HeartStatus
+                  {...post}
+                  is_me={post.user_info.user_id === user_info?.uid}
+                  liked={props.liked}
+                />
+                {/* <Heart
+                  style={{
+                    width: "20px",
+										marginRight: "6px",
+                  }}
+                /> */}
                 <Text vertical="middle" height="inherit">
-                  <Heart
-                    style={{
-                      width: "16px",
-                    }}
-                  />{" "}
-                  {props.comment_cnt}
+                  {props.like_cnt}
                 </Text>
               </Grid>
-              <Grid>
+              <Grid
+                width="auto"
+                is_flex
+                _onClick={() => {
+                  history.push(`/post/${props.id}`);
+                }}
+              >
+                <Comment
+                  style={{
+                    width: "20px",
+                    marginRight: "6px",
+                  }}
+                />
                 <Text vertical="middle" height="inherit">
-                  <Comment
-                    style={{
-                      width: "16px",
-                    }}
-                  />{" "}
+                  {" "}
                   {props.comment_cnt}
                 </Text>
               </Grid>
@@ -155,6 +183,8 @@ Post.defaultProps = {
   comment_cnt: 10,
   insert_dt: "2021-11-28 10:00:00",
   is_me: false,
+  like_cnt: 10,
+  liked: false,
 };
 
 export default Post;
