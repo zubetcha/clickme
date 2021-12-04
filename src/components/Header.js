@@ -37,7 +37,7 @@ const Header = (props) => {
 								window.alert("준비중입니다. 조금만 기다려주세요!")
 							}}></Button>
               <Button
-							 margin="0 5px"
+							 margin="0 10px 0 5px"
                 text="로그아웃"
                 _onClick={() => {
                   dispatch(userActions.logoutFB());
@@ -65,14 +65,14 @@ const Header = (props) => {
         </Grid>
         <Grid is_flex>
           <Button
-					margin="0 5px"
+					 margin="0 5px"
             text="로그인"
             _onClick={() => {
               history.push("/login");
             }}
           ></Button>
           <Button
-					margin="0 5px"
+					margin="0 10px 0 5px"
             text="회원가입"
             _onClick={() => {
               history.push("/join");
@@ -96,7 +96,7 @@ const Header = (props) => {
 								window.alert("준비중입니다. 조금만 기다려주세요!")
 							}}></Button>
               <Button
-							margin="0 5px"
+							margin="0 10px 0 5px"
                 text="로그아웃"
                 _onClick={() => {
                   dispatch(userActions.logoutFB());

@@ -56,10 +56,14 @@ const Post = (props) => {
       <Grid height="100%">
         <Grid is_flex padding="10px" borderBottom="0.5px solid #333">
           <Grid is_flex width="auto">
-            <Image shape="circle" src={props.src} />
-            <Text bold margin="0 0 0 5px">
-              {props.user_info.user_name}
-            </Text>
+            <Grid width="auto">
+              <Image shape="circle" src={props.src} />
+            </Grid>
+            <Grid width="auto">
+              <Text bold margin="0 0 0 5px">
+                {props.user_info.user_name}
+              </Text>
+            </Grid>
           </Grid>
           <Grid is_flex width="auto">
             {props.is_me && (
@@ -76,8 +80,8 @@ const Post = (props) => {
           </Grid>
         </Grid>
         <Grid
-				 borderBottom="0.5px solid #333"
-					padding="20px 0"
+          borderBottom="0.5px solid #333"
+          padding="20px 0"
           _onClick={() => {
             history.push(`/post/${props.id}`);
           }}
@@ -120,7 +124,7 @@ const Post = (props) => {
           )}
         </Grid>
         <Grid>
-          <Grid padding="0 16px" is_flex>
+          <Grid padding="0 10px" is_flex>
             <Grid is_flex width="auto">
               <Grid width="auto" margin="0 15px 0 0" is_flex>
                 <HeartStatus
@@ -128,7 +132,7 @@ const Post = (props) => {
                   is_me={post.user_info.user_id === user_info?.uid}
                   liked={props.liked}
                 />
-                <Text vertical="middle" height="inherit">
+                <Text vertical="middle" height="inherit" size="12px">
                   {props.like_cnt}
                 </Text>
               </Grid>
@@ -145,7 +149,7 @@ const Post = (props) => {
                     marginRight: "4px",
                   }}
                 />
-                <Text vertical="middle" height="inherit">
+                <Text vertical="middle" height="inherit" size="12px">
                   {" "}
                   {props.comment_cnt}
                 </Text>

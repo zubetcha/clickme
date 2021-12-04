@@ -27,7 +27,7 @@ const CommentList = (props) => {
 
   return (
     <React.Fragment>
-      <Grid padding="16px">
+      <Grid padding="16px 10px">
 				{comment_list[post_id].map(c => {
 					return <CommentItem ket={c.id} {...c} />
 				})}

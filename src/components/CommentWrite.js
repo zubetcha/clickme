@@ -22,7 +22,7 @@ const CommentWrite = (props) => {
 
   return (
     <React.Fragment>
-      <Grid padding="32px 16px 0 16px" is_flex>
+      <Grid padding="32px 10px 0 10px" is_flex>
         <Input
           placeholder="댓글 내용을 입력해주세요."
           _onChange={onChange}
